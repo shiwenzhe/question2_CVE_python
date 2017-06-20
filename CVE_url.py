@@ -3,14 +3,33 @@
 
 import urllib.request
 import re
+import socket
+import time
+
+timeout = 20    
+socket.setdefaulttimeout(timeout)#这里对整个socket层设置超时时间。后续文件中如果再使用到socket，不必再设置
+sleep_download_time = 10
 
 #----------------对网页的操作------------------
 # 获取页面信息
 def get_url(url):
-	request		= urllib.request.Request(url)
-	response	= urllib.request.urlopen(request)
-	page		= response.read()
-	data		= page.decode('utf-8')
+	try:
+		#设置延时
+		time.sleep(sleep_download_time)
+
+		request		= urllib.request.Request(url)
+		response	= urllib.request.urlopen(request)
+		page		= response.read()
+		response.close()
+		data		= page.decode('utf-8')
+	except UnicodeDecodeError as e:
+	    print('-----UnicodeDecodeError url:',url)  
+    
+	except urllib.error.URLError as e:  
+	    print("-----urlError url:",url)  
+	  
+	except socket.timeout as e:  
+	    print("-----socket timout:",url)  
 	return data
 
 # 获取关键数据
@@ -36,4 +55,4 @@ def get_listurl(data):
 		list_url.append(next_url)
 	return list_url
 
-print('url import')
+# print('url import')

@@ -8,8 +8,12 @@ import threading
 import time
 from multiprocessing import Process, Queue
 import sched
+import socket
 
 s = sched.scheduler(time.time, time.sleep)
+
+timeout = 20    
+socket.setdefaulttimeout(timeout)#这里对整个socket层设置超时时间。后续文件中如果再使用到socket，不必再设置
 sleep_download_time = 10
 
 

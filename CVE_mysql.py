@@ -50,4 +50,4 @@ def connect(ur, pw, db, use_ud):
 	cursor = conn.cursor()
 	return conn, cursor
 
-print('mysql import')
+# print('mysql import')
