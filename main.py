@@ -8,14 +8,9 @@ import threading
 import time
 from multiprocessing import Process, Queue
 import sched
-import socket
+
 
 s = sched.scheduler(time.time, time.sleep)
-
-timeout = 20    
-socket.setdefaulttimeout(timeout)#这里对整个socket层设置超时时间。后续文件中如果再使用到socket，不必再设置
-sleep_download_time = 10
-
 
 class ThreadSpider(threading.Thread):
 	def __init__(self, num, queue_url, queue_keyvalues):
@@ -28,10 +23,6 @@ class ThreadSpider(threading.Thread):
 		print('线程 %d 正在运行' % (self.num))
 		while not self.queue_url.empty():
 			url = self.queue_url.get()
-
-			#设置延时
-			time.sleep(sleep_download_time)
-
 			data = CVE_url.get_url(url)
 			keyvalues = CVE_url.get_keyvalues(data)
 			self.queue_keyvalues.put(keyvalues)
@@ -109,7 +100,8 @@ def main(url):
 
 	print('更新结束......',time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 	####等待#############
-	s.enter(3600, 1, main, (url,))
+	s.enter(3600, 1, main, (url,)) # 一个小时
+	# s.enter(1200, 1, main, (url,)) # 20分钟
 	s.run()
 		
 if __name__ == '__main__':
